@@ -7,44 +7,36 @@ let stats = JSON.parse(localStorage.getItem('stats')) || {
     lastReset: { day: Date.now(), week: Date.now(), month: Date.now() }
 };
 
-// نظام تثبيت التطبيق المطور
+// --- نظام تثبيت التطبيق المطور ---
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 });
 
-// دالة إظهار النافذة الاحترافية (نعم / لا)
 function showInstallPrompt() {
     const modal = document.getElementById('custom-alert-modal');
     const btnYes = document.getElementById('alert-yes');
     const btnNo = document.getElementById('alert-no');
 
-    // إظهار النافذة
     modal.style.display = 'flex';
 
-    // عند الضغط على "نعم، تثبيت الآن"
     btnYes.onclick = async () => {
         modal.style.display = 'none';
         if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') { console.log('User accepted the install prompt'); }
             deferredPrompt = null;
         } else {
-            alert("التطبيق جاهز بالفعل! إذا لم يظهر التثبيت التلقائي، يمكنك إضافته يدوياً من خيارات المتصفح (Add to Home Screen)");
+            alert("التطبيق مهيأ! إذا لم يظهر التثبيت، أضفه يدوياً من إعدادات المتصفح.");
         }
     };
 
-    // عند الضغط على "ليس الآن"
-    btnNo.onclick = () => {
-        modal.style.display = 'none';
-    };
+    btnNo.onclick = () => { modal.style.display = 'none'; };
 }
 
-// عند تحميل الصفحة
+// --- عند تحميل الصفحة ---
 document.addEventListener('DOMContentLoaded', () => {
-    checkAutoReset();
     updateStatsDisplay();
     renderAdminProducts();
     updateOrderBadge();
@@ -54,7 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('display-store-name').innerText = storedName;
 });
 
-// حفظ المنتج مع الوقت المحدد
+// --- دوال التصفير الجديدة للجداول ---
+function resetVisitors() {
+    if(confirm("هل أنت متأكد من تصفير إحصائيات الزوار؟")) {
+        stats.visitors = { day: 0, week: 0, month: 0 };
+        localStorage.setItem('stats', JSON.stringify(stats));
+        updateStatsDisplay();
+    }
+}
+
+function resetSales() {
+    if(confirm("هل أنت متأكد من تصفير إحصائيات المبيعات؟")) {
+        stats.sales = { day: 0, week: 0, month: 0 };
+        localStorage.setItem('stats', JSON.stringify(stats));
+        updateStatsDisplay();
+    }
+}
+
+function updateStatsDisplay() {
+    document.getElementById('v-day').innerText = stats.visitors.day;
+    document.getElementById('v-week').innerText = stats.visitors.week;
+    document.getElementById('v-month').innerText = stats.visitors.month;
+    
+    document.getElementById('s-day').innerText = stats.sales.day;
+    document.getElementById('s-week').innerText = stats.sales.week;
+    document.getElementById('s-month').innerText = stats.sales.month;
+}
+
+// --- إدارة المنتجات ---
 function saveProduct() {
     const name = document.getElementById('p-name').value;
     const desc = document.getElementById('p-desc').value;
@@ -64,11 +83,10 @@ function saveProduct() {
     
     const hours = parseInt(document.getElementById('p-hours').value) || 0;
     const minutes = parseInt(document.getElementById('p-minutes').value) || 0;
-    
     const imageInput = document.getElementById('p-image');
 
     if (!name || !price || !imageInput.files[0]) {
-        alert("الرجاء ملء البيانات الأساسية ورفع صورة!");
+        alert("أدخل البيانات الأساسية والصورة!");
         return;
     }
 
@@ -85,34 +103,25 @@ function saveProduct() {
         };
         products.push(newProduct);
         localStorage.setItem('products', JSON.stringify(products));
-        alert("تم رفع المنتج مع العداد بنجاح!");
+        alert("تمت الإضافة بنجاح!");
         closeModal('add-modal');
         renderAdminProducts();
     };
     reader.readAsDataURL(imageInput.files[0]);
 }
 
-// عرض المنتجات في لوحة الإدارة
 function renderAdminProducts() {
     const list = document.getElementById('admin-products-list');
     list.innerHTML = products.map(p => `
-        <div class="order-card" style="border-right: 4px solid #fbbf24; margin-bottom: 10px; padding: 15px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <div style="font-weight: bold; font-size: 1.1rem; color: #1e293b;">${p.name}</div>
-            <div style="color: #fbbf24; font-weight: bold;">${p.price} دج</div>
-            ${p.useTimer ? `<div style="font-size: 0.85rem; color: #64748b; margin-top: 5px;"><i class="fas fa-clock"></i> العداد: ${p.timerHours}س و ${p.timerMinutes}د</div>` : ''}
-            <button onclick="deleteProduct(${p.id})" class="btn-delete" style="margin-top:10px; width:100%; background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">حذف المنتج</button>
+        <div class="order-card" style="border-right: 5px solid #fbbf24; background: #f9fafb; margin-bottom:10px;">
+            <b>${p.name}</b> - <span style="color:#f59e0b">${p.price} دج</span>
+            ${p.useTimer ? `<br><small>⏳ العداد: ${p.timerHours}س و ${p.timerMinutes}د</small>` : ''}
+            <button onclick="deleteProduct(${p.id})" class="btn-delete" style="width:100%; margin-top:10px;">حذف</button>
         </div>
     `).join('');
 }
 
-function deleteProduct(id) {
-    if(confirm("حذف هذا المنتج؟")) {
-        products = products.filter(p => p.id !== id);
-        localStorage.setItem('products', JSON.stringify(products));
-        renderAdminProducts();
-    }
-}
-
+// --- إدارة الطلبيات ---
 function toggleOrders() {
     const container = document.getElementById('orders-container');
     container.style.display = container.style.display === 'none' ? 'block' : 'none';
@@ -122,7 +131,7 @@ function toggleOrders() {
 function renderOrders() {
     const list = document.getElementById('orders-list');
     if (orders.length === 0) {
-        list.innerHTML = "<p style='text-align:center; padding:20px;'>لا يوجد طلبيات</p>";
+        list.innerHTML = "<p style='text-align:center;'>لا يوجد طلبات حالياً</p>";
         return;
     }
     list.innerHTML = orders.slice().reverse().map(o => `
@@ -136,24 +145,13 @@ function renderOrders() {
     `).join('');
 }
 
-function deleteOrder(id) {
-    if(confirm("حذف الطلبية؟")) {
-        orders = orders.filter(o => o.id !== id);
-        localStorage.setItem('orders', JSON.stringify(orders));
-        renderOrders();
-        updateOrderBadge();
+// --- الوظائف العامة ---
+function deleteProduct(id) {
+    if(confirm("حذف المنتج؟")) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderAdminProducts();
     }
-}
-
-function checkNewOrders() {
-    setInterval(() => {
-        const latestOrders = JSON.parse(localStorage.getItem('orders')) || [];
-        if (latestOrders.length > orders.length) {
-            orders = latestOrders;
-            document.getElementById('notif-sound').play();
-            updateOrderBadge();
-        }
-    }, 3000);
 }
 
 function updateOrderBadge() {
@@ -166,15 +164,22 @@ function updateOrderBadge() {
     }
 }
 
-function copyStoreLink() {
-    const link = window.location.href.replace('admin.html', 'index.html');
-    navigator.clipboard.writeText(link);
-    alert("تم نسخ رابط المتجر");
+function checkNewOrders() {
+    setInterval(() => {
+        const latest = JSON.parse(localStorage.getItem('orders')) || [];
+        if (latest.length > orders.length) {
+            orders = latest;
+            document.getElementById('notif-sound').play();
+            updateOrderBadge();
+        }
+    }, 3000);
 }
 
-function checkAutoReset() { /* منطق التصفير يبقى كما هو */ }
-function updateStatsDisplay() { /* منطق الإحصائيات يبقى كما هو */ }
-function resetStatsManual() { /* تصفير الإحصائيات يبقى كما هو */ }
+function copyStoreLink() {
+    const link = window.location.href.replace('admin.html', 'index.html');
+    navigator.clipboard.writeText(link).then(() => alert("تم نسخ الرابط بنجاح!"));
+}
+
 function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 function toggleProductsList() {
@@ -189,4 +194,4 @@ function updateStoreName() {
         document.getElementById('display-store-name').innerText = newName;
         closeModal('settings-modal');
     }
-    }
+}
