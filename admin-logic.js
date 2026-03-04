@@ -7,22 +7,39 @@ let stats = JSON.parse(localStorage.getItem('stats')) || {
     lastReset: { day: Date.now(), week: Date.now(), month: Date.now() }
 };
 
-// نظام تثبيت التطبيق
+// نظام تثبيت التطبيق المطور
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 });
 
-async function showInstallPrompt() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') { console.log('User accepted the install prompt'); }
-        deferredPrompt = null;
-    } else {
-        alert("التطبيق جاهز! إذا لم يظهر التثبيت، يمكنك إضافته يدوياً من خيارات المتصفح (إضافة إلى الشاشة الرئيسية)");
-    }
+// دالة إظهار النافذة الاحترافية (نعم / لا)
+function showInstallPrompt() {
+    const modal = document.getElementById('custom-alert-modal');
+    const btnYes = document.getElementById('alert-yes');
+    const btnNo = document.getElementById('alert-no');
+
+    // إظهار النافذة
+    modal.style.display = 'flex';
+
+    // عند الضغط على "نعم، تثبيت الآن"
+    btnYes.onclick = async () => {
+        modal.style.display = 'none';
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') { console.log('User accepted the install prompt'); }
+            deferredPrompt = null;
+        } else {
+            alert("التطبيق جاهز بالفعل! إذا لم يظهر التثبيت التلقائي، يمكنك إضافته يدوياً من خيارات المتصفح (Add to Home Screen)");
+        }
+    };
+
+    // عند الضغط على "ليس الآن"
+    btnNo.onclick = () => {
+        modal.style.display = 'none';
+    };
 }
 
 // عند تحميل الصفحة
@@ -45,7 +62,6 @@ function saveProduct() {
     const oldPrice = document.getElementById('p-old-price').value;
     const useTimer = document.getElementById('p-timer').checked;
     
-    // جلب الساعات والدقائق المحددة
     const hours = parseInt(document.getElementById('p-hours').value) || 0;
     const minutes = parseInt(document.getElementById('p-minutes').value) || 0;
     
@@ -62,9 +78,9 @@ function saveProduct() {
             id: Date.now(),
             name, description: desc, price, oldPrice,
             useTimer,
-            timerHours: hours,   // حفظ الساعات الجديدة
-            timerMinutes: minutes, // حفظ الدقائق الجديدة
-            endTime: Date.now() + (hours * 3600000) + (minutes * 60000), // حساب وقت النهاية
+            timerHours: hours,
+            timerMinutes: minutes,
+            endTime: Date.now() + (hours * 3600000) + (minutes * 60000),
             image: e.target.result
         };
         products.push(newProduct);
@@ -76,14 +92,15 @@ function saveProduct() {
     reader.readAsDataURL(imageInput.files[0]);
 }
 
-// باقي وظائف الإدارة (حذف، طلبات، إحصائيات)
+// عرض المنتجات في لوحة الإدارة
 function renderAdminProducts() {
     const list = document.getElementById('admin-products-list');
     list.innerHTML = products.map(p => `
-        <div class="order-card">
-            <b>${p.name}</b> - ${p.price} دج
-            ${p.useTimer ? `<br><small>⏳ العداد: ${p.timerHours}س و ${p.timerMinutes}د</small>` : ''}
-            <button onclick="deleteProduct(${p.id})" class="btn-delete" style="margin-top:10px; width:100%">حذف المنتج</button>
+        <div class="order-card" style="border-right: 4px solid #fbbf24; margin-bottom: 10px; padding: 15px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <div style="font-weight: bold; font-size: 1.1rem; color: #1e293b;">${p.name}</div>
+            <div style="color: #fbbf24; font-weight: bold;">${p.price} دج</div>
+            ${p.useTimer ? `<div style="font-size: 0.85rem; color: #64748b; margin-top: 5px;"><i class="fas fa-clock"></i> العداد: ${p.timerHours}س و ${p.timerMinutes}د</div>` : ''}
+            <button onclick="deleteProduct(${p.id})" class="btn-delete" style="margin-top:10px; width:100%; background: #fee2e2; color: #ef4444; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">حذف المنتج</button>
         </div>
     `).join('');
 }
@@ -155,9 +172,9 @@ function copyStoreLink() {
     alert("تم نسخ رابط المتجر");
 }
 
-function checkAutoReset() { /* دالة التصفير التلقائي تبقى كما هي */ }
-function updateStatsDisplay() { /* دالة عرض الإحصائيات تبقى كما هي */ }
-function resetStatsManual() { /* دالة التصفير اليدوي تبقى كما هي */ }
+function checkAutoReset() { /* منطق التصفير يبقى كما هو */ }
+function updateStatsDisplay() { /* منطق الإحصائيات يبقى كما هو */ }
+function resetStatsManual() { /* تصفير الإحصائيات يبقى كما هو */ }
 function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 function toggleProductsList() {
@@ -172,4 +189,4 @@ function updateStoreName() {
         document.getElementById('display-store-name').innerText = newName;
         closeModal('settings-modal');
     }
-}
+    }
