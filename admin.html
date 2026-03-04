@@ -112,6 +112,22 @@
         </div>
     </div>
 
+    <div id="custom-alert-modal" class="modal" style="display:none; z-index: 10000; background: rgba(0,0,0,0.8);">
+        <div class="modal-content" style="border-top: 6px solid #fbbf24; text-align: center; max-width: 320px;">
+            <div style="background: #fffbeb; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-mobile-screen-button" style="font-size: 2rem; color: #fbbf24;"></i>
+            </div>
+            <h3 style="color: #1e293b; font-size: 1.3rem; margin-bottom: 10px;">تثبيت التطبيق</h3>
+            <p id="alert-message" style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 25px;">
+                هل ترغب في إضافة <b>متجر حسام DZ</b> كاختصار سريع على شاشة هاتفك؟
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="alert-yes" class="btn-save" style="width: 100%; margin: 0; background: #fbbf24; color: #1e293b; font-weight: bold;">نعم، تثبيت الآن</button>
+                <button id="alert-no" class="btn-cancel" style="width: 100%; margin: 0; background: #f1f5f9; color: #64748b; border: none;">ليس الآن</button>
+            </div>
+        </div>
+    </div>
+
     <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
@@ -122,4 +138,4 @@
     </script>
     <script src="admin-logic.js"></script>
 </body>
-        </html>
+</html>
