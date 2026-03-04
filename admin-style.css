@@ -1,0 +1,73 @@
+/* الألوان الأساسية: أسود ملكي وذهبي متدرج */
+:root {
+    --gold-gradient: linear-gradient(45deg, #d4af37, #fcf6ba, #d4af37);
+    --bg-black: #0a0a0a;
+    --card-dark: #161616;
+    --text-gold: #d4af37;
+    --danger: #ff4d4d;
+    --success: #00c851;
+}
+
+/* تنسيق النوافذ المنبثقة (Modals) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none; /* مخفي افتراضياً */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(8px); /* تأثير ضبابي للخلفية */
+}
+
+.modal-box {
+    background: var(--card-dark);
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    border: 1px solid var(--text-gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    transform: translateY(-20px);
+    transition: 0.3s ease;
+}
+
+/* زر "تمت العملية" المثير */
+.alert-success {
+    color: var(--success);
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* تنسيق أزرار الحذف (نعم / لا) */
+.btn-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-confirm {
+    background: var(--gold-gradient);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #666;
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    flex: 1;
+}
