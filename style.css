@@ -1,0 +1,171 @@
+/* الألوان الأساسية والتنسيق العام */
+:root {
+    --primary-color: #ff3e3e; /* لون مثير وجذاب */
+    --accent-color: #ffd700; /* ذهبي للتنبيه */
+    --bg-color: #f8f9fa;
+    --text-color: #222;
+    --white: #ffffff;
+    --success-color: #28a745;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+/* 1. الهيدر والاسم المتحرك */
+header {
+    background: linear-gradient(135deg, #000, #333);
+    color: var(--accent-color);
+    text-align: center;
+    padding: 30px 10px;
+    border-bottom: 4px solid var(--primary-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.animated-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #ff3e3e, 0 0 20px #ff3e3e; }
+    to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; color: #fff; }
+}
+
+/* الرسالة الترحيبية المتحركة */
+.welcome-msg-container {
+    overflow: hidden;
+    background: var(--primary-color);
+    margin-top: 15px;
+    padding: 5px 0;
+}
+
+.moving-text {
+    white-space: nowrap;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: inline-block;
+    animation: move-left 15s linear infinite;
+}
+
+@keyframes move-left {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* 2. عرض المنتجات */
+#products-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: 20px;
+    margin-bottom: 25px;
+    padding: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover { transform: translateY(-5px); }
+
+.product-image {
+    width: 100%;
+    border-radius: 15px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.product-info h3 { margin: 15px 0 5px; font-size: 1.4rem; color: #000; }
+.product-price { color: var(--primary-color); font-size: 1.6rem; font-weight: 900; margin: 10px 0; }
+
+/* زر الشراء المتحرك */
+.btn-buy {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, var(--primary-color), #ff7675);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 62, 62, 0.4);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+/* 3. استمارة الشراء (Modal) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 25px;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.form-group { margin-bottom: 15px; text-align: right; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input {
+    width: 100%; padding: 12px;
+    border: 2px solid #ddd; border-radius: 10px;
+    box-sizing: border-box; font-family: 'Cairo';
+}
+
+.modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+.btn-confirm { flex: 2; background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; }
+.btn-cancel { flex: 1; background: #999; color: white; border: none; padding: 12px; border-radius: 10px; }
+
+/* 4. رسالة النجاح */
+.success-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--white); z-index: 2000;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.success-card { text-align: center; padding: 30px; }
+.check-icon {
+    width: 80px; height: 80px; background: var(--success-color);
+    color: white; font-size: 3rem; line-height: 80px;
+    border-radius: 50%; margin: 0 auto 20px;
+}
+
+/* رسالة لا يوجد منتجات */
+.no-products-msg {
+    text-align: center; padding: 100px 20px; color: #888;
+}
+.no-products-msg i { font-size: 4rem; color: #ccc; margin-bottom: 15px; }
