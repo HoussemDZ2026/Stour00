@@ -3,58 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم حسام DZ | الإدارة</title>
+    <title>لوحة تحكم حسام DZ | الإدارة الاحترافية</title>
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* لمسات إضافية للألوان المثيرة والأشكال السحابية */
+        :root {
+            --primary-gold: #fbbf24;
+            --deep-blue: #1e293b;
+            --cloud-white: #ffffff;
+            --sexy-gradient: linear-gradient(135.0deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .cloud-title {
+            background: var(--cloud-white);
+            border-radius: 50px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            width: 85%;
+            border: 2px solid var(--primary-gold);
+        }
+
+        .rounded-copy-btn {
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 30px;
+            padding: 12px 30px;
+            margin: 10px auto;
+            display: block;
+            width: fit-content;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cloud-download-btn {
+            background: var(--sexy-gradient);
+            color: var(--deep-blue);
+            border-radius: 15px;
+            padding: 15px;
+            width: 80%;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 900;
+            border: none;
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3);
+        }
+
+        .admin-table {
+            width: 95%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .admin-table th { background: var(--deep-blue); color: white; padding: 12px; }
+        .admin-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-weight: bold; }
+
+        .btn-table-reset {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .sexy-add-btn {
+            background: var(--sexy-gradient);
+            color: var(--deep-blue);
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            border-radius: 20px;
+            width: 90%;
+            margin: 20px auto;
+            display: block;
+            border: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .vertical-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .btn-orders-new { background: #3b82f6; }
+        .btn-products-new { background: #10b981; }
+        .btn-settings-new { background: #64748b; margin-top: 10px; opacity: 0.9; }
+
+    </style>
 </head>
 <body>
 
-    <header class="admin-header">
-        <h1 id="display-store-name" class="store-title">متجر حسام DZ</h1>
-        <div class="header-actions">
-            <button class="btn-icon" onclick="copyStoreLink()"><i class="fas fa-copy"></i> نسخ الرابط</button>
-            <button class="btn-icon" onclick="showInstallPrompt()"><i class="fas fa-download"></i> تنزيل التطبيق</button>
+    <div style="text-align: center;">
+        <div class="cloud-title">
+            <h1 id="display-store-name" style="margin:0; color: #1e293b; font-weight: 900;">متجر حسام DZ</h1>
         </div>
-    </header>
 
-    <section class="stats-section">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <p>الزوار</p>
-                <div class="counts">
-                    <span>يوم: <b id="v-day">0</b></span>
-                    <span>أسبوع: <b id="v-week">0</b></span>
-                    <span>شهر: <b id="v-month">0</b></span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-shopping-bag"></i>
-                <p>المبيعات</p>
-                <div class="counts">
-                    <span>يوم: <b id="s-day">0</b></span>
-                    <span>أسبوع: <b id="s-week">0</b></span>
-                    <span>شهر: <b id="s-month">0</b></span>
-                </div>
-            </div>
-        </div>
-        <button class="btn-reset" onclick="resetStatsManual()"><i class="fas fa-redo"></i> تصفير الإحصائيات يدوياً</button>
-    </section>
+        <button class="rounded-copy-btn" onclick="copyStoreLink()">
+            <i class="fas fa-link"></i> نسخ رابط المتجر
+        </button>
 
-    <nav class="admin-nav">
-        <button class="main-btn" onclick="openAddModal()"><i class="fas fa-plus-circle"></i> إضافة منتج جديد</button>
-        <button class="main-btn btn-orders" onclick="toggleOrders()"><i class="fas fa-truck"></i> الطلبيات الواردة <span id="order-badge" class="badge" style="display:none;">0</span></button>
-        <button class="main-btn btn-products" onclick="toggleProductsList()"><i class="fas fa-boxes"></i> المنتجات الحالية</button>
-        <button class="main-btn btn-settings" onclick="openSettings()"><i class="fas fa-cog"></i> إعدادات المتجر</button>
-    </nav>
+        <button class="cloud-download-btn" onclick="showInstallPrompt()">
+            <i class="fas fa-cloud-download-alt"></i> تنزيل التطبيق على الهاتف
+        </button>
+    </div>
 
-    <div id="orders-container" class="data-section" style="display:none;">
+    <h2 style="padding-right: 20px; font-size: 1.1rem; color: #475569;"><i class="fas fa-eye"></i> إحصائيات الزوار</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>اليوم</th>
+                <th>الأسبوع</th>
+                <th>الشهر</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="v-day">0</td>
+                <td id="v-week">0</td>
+                <td id="v-month">0</td>
+                <td><button class="btn-table-reset" onclick="resetVisitors()">تصفير</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="padding-right: 20px; font-size: 1.1rem; color: #475569;"><i class="fas fa-shopping-cart"></i> تقرير المبيعات</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>اليوم</th>
+                <th>الأسبوع</th>
+                <th>الشهر</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="s-day">0</td>
+                <td id="s-week">0</td>
+                <td id="s-month">0</td>
+                <td><button class="btn-table-reset" onclick="resetSales()">تصفير</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="sexy-add-btn" onclick="openAddModal()">
+        <i class="fas fa-plus-circle"></i> إضافة منتج جديد الآن
+    </button>
+
+    <div class="vertical-nav">
+        <button class="nav-item btn-orders-new" onclick="toggleOrders()">
+            <i class="fas fa-truck"></i> الطلبيات الواردة 
+            <span id="order-badge" class="badge" style="background:red; padding:2px 8px; border-radius:10px; display:none;">0</span>
+        </button>
+        
+        <button class="nav-item btn-products-new" onclick="toggleProductsList()">
+            <i class="fas fa-boxes"></i> المنتجات الحالية في المتجر
+        </button>
+
+        <button class="nav-item btn-settings-new" onclick="openSettings()">
+            <i class="fas fa-cog"></i> إعدادات المتجر العامة
+        </button>
+    </div>
+
+    <div id="orders-container" class="data-section" style="display:none; padding: 20px;">
         <h2 class="section-title">قائمة الطلبات</h2>
         <div id="orders-list"></div>
     </div>
 
-    <div id="admin-products-container" class="data-section" style="display:none;">
+    <div id="admin-products-container" class="data-section" style="display:none; padding: 20px;">
         <h2 class="section-title">إدارة المنتجات</h2>
         <div id="admin-products-list"></div>
     </div>
@@ -72,17 +222,10 @@
                 <input type="checkbox" id="p-timer" onchange="toggleTimerInputs()">
             </div>
 
-            <div id="timer-inputs-container" style="display:none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-                <p style="font-size: 0.8rem; margin-bottom: 8px; color: #64748b;">حدد مدة العداد التنازلي:</p>
+            <div id="timer-inputs-container" style="display:none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px;">
                 <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.7rem; display: block;">ساعات:</label>
-                        <input type="number" id="p-hours" class="admin-input" value="0" min="0" style="margin:0">
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.7rem; display: block;">دقائق:</label>
-                        <input type="number" id="p-minutes" class="admin-input" value="30" min="0" max="59" style="margin:0">
-                    </div>
+                    <input type="number" id="p-hours" class="admin-input" placeholder="ساعات" value="0">
+                    <input type="number" id="p-minutes" class="admin-input" placeholder="دقائق" value="30">
                 </div>
             </div>
 
@@ -90,7 +233,6 @@
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>اضغط لرفع صورة المنتج</p>
                 <input type="file" id="p-image" hidden accept="image/*">
-                <img id="image-preview" style="display:none; width: 100px; margin-top: 10px;">
             </div>
 
             <div class="modal-actions">
@@ -100,31 +242,22 @@
         </div>
     </div>
 
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <h3>إعدادات المتجر</h3>
-            <label>اسم المتجر الجديد:</label>
-            <input type="text" id="new-store-name" class="admin-input" placeholder="اكتب الاسم هنا">
-            <div class="modal-actions">
-                <button onclick="updateStoreName()" class="btn-save">حفظ التغيير</button>
-                <button onclick="closeModal('settings-modal')" class="btn-cancel">إلغاء</button>
-            </div>
+    <div id="custom-alert-modal" class="modal" style="display:none; z-index: 10000; background: rgba(0,0,0,0.8);">
+        <div class="modal-content" style="border-top: 6px solid #fbbf24; text-align: center; max-width: 320px;">
+            <i class="fas fa-mobile-screen-button" style="font-size: 2.5rem; color: #fbbf24; margin-bottom: 15px;"></i>
+            <h3>تثبيت التطبيق</h3>
+            <p>هل ترغب في إضافة المتجر كاختصار على هاتفك؟</p>
+            <button id="alert-yes" class="btn-save" style="width:100%; background:#fbbf24; color:black;">نعم، تثبيت</button>
+            <button id="alert-no" class="btn-cancel" style="width:100%; border:none;">ليس الآن</button>
         </div>
     </div>
 
-    <div id="custom-alert-modal" class="modal" style="display:none; z-index: 10000; background: rgba(0,0,0,0.8);">
-        <div class="modal-content" style="border-top: 6px solid #fbbf24; text-align: center; max-width: 320px;">
-            <div style="background: #fffbeb; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fas fa-mobile-screen-button" style="font-size: 2rem; color: #fbbf24;"></i>
-            </div>
-            <h3 style="color: #1e293b; font-size: 1.3rem; margin-bottom: 10px;">تثبيت التطبيق</h3>
-            <p id="alert-message" style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 25px;">
-                هل ترغب في إضافة <b>متجر حسام DZ</b> كاختصار سريع على شاشة هاتفك؟
-            </p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="alert-yes" class="btn-save" style="width: 100%; margin: 0; background: #fbbf24; color: #1e293b; font-weight: bold;">نعم، تثبيت الآن</button>
-                <button id="alert-no" class="btn-cancel" style="width: 100%; margin: 0; background: #f1f5f9; color: #64748b; border: none;">ليس الآن</button>
-            </div>
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h3>إعدادات المتجر</h3>
+            <input type="text" id="new-store-name" class="admin-input" placeholder="اسم المتجر الجديد">
+            <button onclick="updateStoreName()" class="btn-save">حفظ</button>
+            <button onclick="closeModal('settings-modal')" class="btn-cancel">إلغاء</button>
         </div>
     </div>
 
