@@ -1,59 +1,80 @@
-// --- إعدادات البيانات ---
-let products = JSON.parse(localStorage.getItem('myProducts')) || [];
+// مصفوفات البيانات
+let products = JSON.parse(localStorage.getItem('products')) || [];
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
+let stats = JSON.parse(localStorage.getItem('stats')) || {
+    visitors: { day: 0, week: 0, month: 0 },
+    sales: { day: 0, week: 0, month: 0 },
+    lastReset: { day: Date.now(), week: Date.now(), month: Date.now() }
+};
 
-// --- وظيفة نسخ الرابط مع النافذة الجذابة ---
-function copyStoreLink() {
-    const link = "https://houssemdz2026.github.io/Stour00/";
-    navigator.clipboard.writeText(link).then(() => {
-        actionSuccess("✨ تم نسخ رابط متجرك بنجاح!");
-    });
-}
+// عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    checkAutoReset();
+    updateStatsDisplay();
+    renderAdminProducts();
+    updateOrderBadge();
+    checkNewOrders();
+    
+    // تحديث اسم المتجر في اللوحة
+    const storedName = localStorage.getItem('storeName') || "متجر حسام DZ";
+    document.getElementById('display-store-name').innerText = storedName;
+});
 
-// --- نظام الإحصائيات والتصفير التلقائي ---
+// 1. نظام التقارير والتصفير التلقائي
 function checkAutoReset() {
-    const now = new Date();
-    const lastReset = JSON.parse(localStorage.getItem('lastResetStats')) || {
-        day: now.getTime(),
-        week: now.getTime(),
-        month: now.getTime()
-    };
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const oneWeek = 7 * oneDay;
+    const oneMonth = 30 * oneDay;
 
-    const diff = now.getTime() - lastReset.day;
-    
-    // تصفير يومي (24 ساعة)
-    if (diff >= 24 * 60 * 60 * 1000) {
-        resetStatValue('v-day');
-        lastReset.day = now.getTime();
+    if (now - stats.lastReset.day >= oneDay) {
+        stats.visitors.day = 0; stats.sales.day = 0;
+        stats.lastReset.day = now;
     }
-    // تصفير أسبوعي (7 أيام)
-    if (diff >= 7 * 24 * 60 * 60 * 1000) {
-        lastReset.week = now.getTime();
+    if (now - stats.lastReset.week >= oneWeek) {
+        stats.visitors.week = 0; stats.sales.week = 0;
+        stats.lastReset.week = now;
     }
-    // تصفير شهري (30 يوم)
-    if (diff >= 30 * 24 * 60 * 60 * 1000) {
-        lastReset.month = now.getTime();
+    if (now - stats.lastReset.month >= oneMonth) {
+        stats.visitors.month = 0; stats.sales.month = 0;
+        stats.lastReset.month = now;
     }
-    
-    localStorage.setItem('lastResetStats', JSON.stringify(lastReset));
+    saveStats();
 }
 
-function resetStatValue(id) {
-    document.getElementById(id).innerText = '0';
-    actionSuccess("تم تصفير العداد");
+function updateStatsDisplay() {
+    document.getElementById('v-day').innerText = stats.visitors.day;
+    document.getElementById('v-week').innerText = stats.visitors.week;
+    document.getElementById('v-month').innerText = stats.visitors.month;
+    document.getElementById('s-day').innerText = stats.sales.day;
+    document.getElementById('s-week').innerText = stats.sales.week;
+    document.getElementById('s-month').innerText = stats.sales.month;
 }
 
-// --- إضافة منتج جديد مع الصورة ومؤقت التشويق ---
+function resetStatsManual() {
+    if(confirm("هل أنت متأكد من تصفير جميع الإحصائيات يدوياً؟")) {
+        stats.visitors = { day: 0, week: 0, month: 0 };
+        stats.sales = { day: 0, week: 0, month: 0 };
+        saveStats();
+        updateStatsDisplay();
+        alert("تم التصفير بنجاح!");
+    }
+}
+
+// 2. إدارة المنتجات
+function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
 function saveProduct() {
     const name = document.getElementById('p-name').value;
     const desc = document.getElementById('p-desc').value;
     const price = document.getElementById('p-price').value;
     const oldPrice = document.getElementById('p-old-price').value;
-    const timer = document.getElementById('p-timer').value;
-    const fileInput = document.getElementById('f-input');
+    const useTimer = document.getElementById('p-timer').checked;
+    const imageInput = document.getElementById('p-image');
 
-    if (!name || !price || !fileInput.files[0]) {
-        alert("أدخل اسم المنتج، السعر، والصورة!");
+    if (!name || !price || !imageInput.files[0]) {
+        alert("الرجاء ملء البيانات الأساسية ورفع صورة!");
         return;
     }
 
@@ -61,74 +82,116 @@ function saveProduct() {
     reader.onload = function(e) {
         const newProduct = {
             id: Date.now(),
-            name: name,
-            desc: desc,
-            price: price,
-            oldPrice: oldPrice,
-            timer: timer,
-            image: e.target.result // الصورة بصيغة نصية محفظة
+            name, description: desc, price, oldPrice, useTimer,
+            image: e.target.result
         };
-
         products.push(newProduct);
-        localStorage.setItem('myProducts', JSON.stringify(products));
-        
-        actionSuccess("تم إضافة المنتج بنجاح ✨");
-        setTimeout(() => { location.reload(); }, 1500);
+        localStorage.setItem('products', JSON.stringify(products));
+        alert("تم رفع المنتج بنجاح!");
+        closeModal('add-modal');
+        renderAdminProducts();
     };
-    reader.readAsDataURL(fileInput.files[0]);
+    reader.readAsDataURL(imageInput.files[0]);
 }
 
-// --- نظام الإشعارات والرنة الجذابة ---
-function playNotificationSound() {
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3'); // صوت رنة مبيعة
-    audio.play();
-}
-
-// --- عرض وإدارة الطلبيات الواردة ---
-function displayOrders() {
-    const container = document.getElementById('ordersList');
-    if(!container) return;
-
-    container.innerHTML = orders.map((order, index) => `
-        <div class="stat-box" style="text-align:right; margin-bottom:15px; border-right: 5px solid var(--gold);">
-            <p><strong>📦 المنتج:</strong> ${order.productName}</p>
-            <p><strong>👤 الزبون:</strong> ${order.customerName}</p>
-            <p><strong>📞 الهاتف:</strong> ${order.customerPhone}</p>
-            <p><strong>📍 العنوان:</strong> ${order.customerAddress}</p>
-            <p style="font-size:0.8em; color:#888;">📅 ${order.date}</p>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <a href="tel:${order.customerPhone}" class="btn-main add-btn" style="text-decoration:none; font-size:0.8em; flex:1;">اتصال</a>
-                <button onclick="deleteOrder(${index})" class="btn-main" style="background:red; color:white; font-size:0.8em; flex:1;">حذف</button>
-            </div>
+function renderAdminProducts() {
+    const list = document.getElementById('admin-products-list');
+    list.innerHTML = products.map(p => `
+        <div class="order-card">
+            <b>${p.name}</b> - ${p.price} دج
+            <button onclick="deleteProduct(${p.id})" class="btn-delete" style="margin-top:10px;">حذف المنتج</button>
         </div>
     `).join('');
 }
 
-function deleteOrder(index) {
-    if(confirm("هل أنت متأكد من حذف الطلبية؟")) {
-        orders.splice(index, 1);
-        localStorage.setItem('orders', JSON.stringify(orders));
-        displayOrders();
-        actionSuccess("تم الحذف");
+function deleteProduct(id) {
+    if(confirm("حذف هذا المنتج؟")) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderAdminProducts();
     }
 }
 
-// --- تشغيل الوظائف عند فتح الصفحة ---
-window.onload = function() {
-    checkAutoReset();
-    if(document.getElementById('v-day')) {
-        // تحديث أرقام الإحصائيات من الـ LocalStorage
-        document.getElementById('s-day').innerText = orders.length;
-    }
-    displayOrders();
-};
+// 3. إدارة الطلبيات الواردة والتنبيهات
+function toggleOrders() {
+    const container = document.getElementById('orders-container');
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+    renderOrders();
+}
 
-// وظيفة رسالة النجاح الجذابة
-function actionSuccess(msg) {
-    const toast = document.getElementById('successToast');
-    if(toast) {
-        toast.innerText = msg;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+function renderOrders() {
+    const list = document.getElementById('orders-list');
+    if (orders.length === 0) {
+        list.innerHTML = "<p style='text-align:center; padding:20px;'>لا يوجد طلبيات</p>";
+        return;
     }
-                                              }
+    list.innerHTML = orders.slice().reverse().map(o => `
+        <div class="order-card">
+            <div class="order-header">${o.productName}</div>
+            <div class="order-date">${o.date}</div>
+            <p>الزبون: <b>${o.customerName}</b></p>
+            <span class="order-phone">${o.customerPhone}</span>
+            <p>العنوان: ${o.customerAddress}</p>
+            <p>الكمية: ${o.quantity}</p>
+            <button class="btn-call" onclick="window.location.href='tel:${o.customerPhone}'">اتصال بالزبون</button>
+            <button class="btn-delete" onclick="deleteOrder(${o.id})">حذف الطلبية</button>
+        </div>
+    `).join('');
+}
+
+function deleteOrder(id) {
+    if(confirm("هل أنت متأكد من حذف الطلبية؟")) {
+        orders = orders.filter(o => o.id !== id);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrders();
+        updateOrderBadge();
+        alert("تم الحذف بنجاح");
+    }
+}
+
+// 4. نظام الإشعارات والصوت
+function checkNewOrders() {
+    setInterval(() => {
+        const latestOrders = JSON.parse(localStorage.getItem('orders')) || [];
+        if (latestOrders.length > orders.length) {
+            orders = latestOrders;
+            document.getElementById('notif-sound').play();
+            updateOrderBadge();
+            alert("مبروك! وصلتك طلبية جديدة الآن 🔥");
+        }
+    }, 3000);
+}
+
+function updateOrderBadge() {
+    const badge = document.getElementById('order-badge');
+    if (orders.length > 0) {
+        badge.innerText = orders.length;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// وظائف إضافية
+function updateStoreName() {
+    const newName = document.getElementById('new-store-name').value;
+    if(newName) {
+        localStorage.setItem('storeName', newName);
+        document.getElementById('display-store-name').innerText = newName;
+        alert("تم تغيير اسم المتجر بنجاح");
+        closeModal('settings-modal');
+    }
+}
+
+function copyStoreLink() {
+    const link = window.location.href.replace('admin.html', 'index.html');
+    navigator.clipboard.writeText(link);
+    alert("تم نسخ رابط متجرك بنجاح");
+}
+
+function saveStats() { localStorage.setItem('stats', JSON.stringify(stats)); }
+function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+function toggleProductsList() {
+    const list = document.getElementById('admin-products-container');
+    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+                                                             }
