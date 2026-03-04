@@ -1,23 +1,38 @@
-// وظيفة تشغيل الرنة الجذابة
-function playSaleSound() {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3'); // يمكنك تغيير الرابط لصوت رنة نقود
-    audio.play();
-}
-
-// طلب إذن الإشعارات من المتصفح
-function requestNotificationPermission() {
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission();
+// طلب الإذن لإرسال إشعارات النظام على الهاتف
+document.addEventListener('DOMContentLoaded', () => {
+    if ("Notification" in window) {
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    console.log("تم تفعيل نظام الإشعارات بنجاح!");
+                }
+            });
+        }
     }
-}
+});
 
-// إظهار إشعار المبيعة
-function showSaleNotification(customerName, product) {
-    if (Notification.permission === 'granted') {
-        new Notification("✨ مبيعة جديدة!", {
-            body: `قام ${customerName} بطلب ${product}`,
-            icon: 'icon.png'
+// دالة إرسال الإشعار مع الصوت
+function sendOrderNotification(productName) {
+    const audio = document.getElementById('notif-sound');
+    
+    // تشغيل الصوت
+    if (audio) {
+        audio.play().catch(e => console.log("خطأ في تشغيل الصوت: ", e));
+    }
+
+    // إظهار إشعار النظام (Push Notification)
+    if (Notification.permission === "granted") {
+        const notif = new Notification("مبروك! طلبية جديدة 🔥", {
+            body: `وصلك طلب شراء لمنتج: ${productName}`,
+            icon: "https://cdn-icons-png.flaticon.com/512/3081/3081840.png"
         });
-        playSaleSound();
+
+        notif.onclick = () => {
+            window.focus();
+            toggleOrders(); // فتح قائمة الطلبات تلقائياً عند الضغط
+        };
     }
 }
+
+// ربط هذه الدالة بنظام الفحص في ملف admin-logic.js
+// ملاحظة: تأكد من استدعاء sendOrderNotification() داخل setInterval في ملف admin-logic
