@@ -51,8 +51,7 @@
 
     <div id="orders-container" class="data-section" style="display:none;">
         <h2 class="section-title">قائمة الطلبات</h2>
-        <div id="orders-list">
-            </div>
+        <div id="orders-list"></div>
     </div>
 
     <div id="admin-products-container" class="data-section" style="display:none;">
@@ -70,7 +69,21 @@
             
             <div class="option-row">
                 <label>تفعيل عداد تشويق؟</label>
-                <input type="checkbox" id="p-timer">
+                <input type="checkbox" id="p-timer" onchange="toggleTimerInputs()">
+            </div>
+
+            <div id="timer-inputs-container" style="display:none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                <p style="font-size: 0.8rem; margin-bottom: 8px; color: #64748b;">حدد مدة العداد التنازلي:</p>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7rem; display: block;">ساعات:</label>
+                        <input type="number" id="p-hours" class="admin-input" value="0" min="0" style="margin:0">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7rem; display: block;">دقائق:</label>
+                        <input type="number" id="p-minutes" class="admin-input" value="30" min="0" max="59" style="margin:0">
+                    </div>
+                </div>
             </div>
 
             <div class="upload-area" onclick="document.getElementById('p-image').click()">
@@ -94,13 +107,19 @@
             <input type="text" id="new-store-name" class="admin-input" placeholder="اكتب الاسم هنا">
             <div class="modal-actions">
                 <button onclick="updateStoreName()" class="btn-save">حفظ التغيير</button>
-                <button onclick="closeModal('settings-modal')" class="btn-cancel">إغاء</button>
+                <button onclick="closeModal('settings-modal')" class="btn-cancel">إلغاء</button>
             </div>
         </div>
     </div>
 
     <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
+    <script>
+        function toggleTimerInputs() {
+            const container = document.getElementById('timer-inputs-container');
+            container.style.display = document.getElementById('p-timer').checked ? 'block' : 'none';
+        }
+    </script>
     <script src="admin-logic.js"></script>
 </body>
-                </html>
+        </html>
