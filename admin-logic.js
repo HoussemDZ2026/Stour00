@@ -73,7 +73,7 @@ function updateStatsDisplay() {
     document.getElementById('s-month').innerText = stats.sales.month;
 }
 
-// --- إدارة المنتجات ---
+// --- إدارة المنتجات مع ضغط الصور التلقائي ---
 function saveProduct() {
     const name = document.getElementById('p-name').value;
     const desc = document.getElementById('p-desc').value;
@@ -90,24 +90,49 @@ function saveProduct() {
         return;
     }
 
+    const file = imageInput.files[0];
     const reader = new FileReader();
+
     reader.onload = function(e) {
-        const newProduct = {
-            id: Date.now(),
-            name, description: desc, price, oldPrice,
-            useTimer,
-            timerHours: hours,
-            timerMinutes: minutes,
-            endTime: Date.now() + (hours * 3600000) + (minutes * 60000),
-            image: e.target.result
+        const img = new Image();
+        img.src = e.target.result;
+
+        img.onload = function() {
+            // إعدادات الضغط: تصغير الصورة لتوفير المساحة
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 500; // عرض الصورة الأقصى (كافٍ للهواتف)
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // تحويل الصورة إلى JPEG بجودة متوسطة (0.6) لتقليل حجم الكود المخزن
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+
+            const newProduct = {
+                id: Date.now(),
+                name, description: desc, price, oldPrice,
+                useTimer,
+                timerHours: hours,
+                timerMinutes: minutes,
+                endTime: Date.now() + (hours * 3600000) + (minutes * 60000),
+                image: compressedBase64 
+            };
+
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            alert("تم حفظ المنتج بنجاح! تم ضغط الصورة تلقائياً لتوفير المساحة.");
+            closeModal('add-modal');
+            renderAdminProducts();
+            
+            // تصفير خانة الصورة للمعالجة القادمة
+            imageInput.value = "";
         };
-        products.push(newProduct);
-        localStorage.setItem('products', JSON.stringify(products));
-        alert("تمت الإضافة بنجاح!");
-        closeModal('add-modal');
-        renderAdminProducts();
     };
-    reader.readAsDataURL(imageInput.files[0]);
+    reader.readAsDataURL(file);
 }
 
 function renderAdminProducts() {
