@@ -35,23 +35,50 @@ function showInstallPrompt() {
     btnNo.onclick = () => { modal.style.display = 'none'; };
 }
 
+// --- وظيفة حساب مساحة التخزين المتبقية ---
+function updateStorageInfo() {
+    // حساب الحجم المستخدم بالكيلوبايت (الحد الأقصى للمتصفح عادة 5MB أي 5120KB)
+    const totalSize = (encodeURI(JSON.stringify(localStorage)).length / 1024); 
+    const limit = 5120; 
+    const percent = Math.min((totalSize / limit) * 100, 100).toFixed(1);
+
+    const bar = document.getElementById('storage-bar');
+    const percentText = document.getElementById('storage-percent');
+    
+    if (bar && percentText) {
+        bar.style.width = percent + "%";
+        percentText.innerText = percent + "%";
+
+        // تغيير الألوان حسب الامتلاء
+        if (percent > 80) {
+            bar.style.background = "linear-gradient(90deg, #ef4444, #b91c1c)"; // أحمر خطر
+        } else if (percent > 50) {
+            bar.style.background = "linear-gradient(90deg, #f59e0b, #d97706)"; // برتقالي تنبيه
+        } else {
+            bar.style.background = "linear-gradient(90deg, #10b981, #059669)"; // أخضر آمن
+        }
+    }
+}
+
 // --- عند تحميل الصفحة ---
 document.addEventListener('DOMContentLoaded', () => {
     updateStatsDisplay();
     renderAdminProducts();
     updateOrderBadge();
     checkNewOrders();
+    updateStorageInfo(); // تحديث شريط المساحة عند الفتح
     
     const storedName = localStorage.getItem('storeName') || "متجر حسام DZ";
     document.getElementById('display-store-name').innerText = storedName;
 });
 
-// --- دوال التصفير الجديدة للجداول ---
+// --- دوال التصفير للجداول ---
 function resetVisitors() {
     if(confirm("هل أنت متأكد من تصفير إحصائيات الزوار؟")) {
         stats.visitors = { day: 0, week: 0, month: 0 };
         localStorage.setItem('stats', JSON.stringify(stats));
         updateStatsDisplay();
+        updateStorageInfo();
     }
 }
 
@@ -60,6 +87,7 @@ function resetSales() {
         stats.sales = { day: 0, week: 0, month: 0 };
         localStorage.setItem('stats', JSON.stringify(stats));
         updateStatsDisplay();
+        updateStorageInfo();
     }
 }
 
@@ -73,7 +101,7 @@ function updateStatsDisplay() {
     document.getElementById('s-month').innerText = stats.sales.month;
 }
 
-// --- إدارة المنتجات مع ضغط الصور التلقائي ---
+// --- إدارة المنتجات مع الضغط وتحديث المساحة ---
 function saveProduct() {
     const name = document.getElementById('p-name').value;
     const desc = document.getElementById('p-desc').value;
@@ -98,9 +126,8 @@ function saveProduct() {
         img.src = e.target.result;
 
         img.onload = function() {
-            // إعدادات الضغط: تصغير الصورة لتوفير المساحة
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 500; // عرض الصورة الأقصى (كافٍ للهواتف)
+            const MAX_WIDTH = 500; 
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
@@ -108,7 +135,6 @@ function saveProduct() {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // تحويل الصورة إلى JPEG بجودة متوسطة (0.6) لتقليل حجم الكود المخزن
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
             const newProduct = {
@@ -124,11 +150,10 @@ function saveProduct() {
             products.push(newProduct);
             localStorage.setItem('products', JSON.stringify(products));
             
-            alert("تم حفظ المنتج بنجاح! تم ضغط الصورة تلقائياً لتوفير المساحة.");
+            alert("تم حفظ المنتج! تم ضغط الصورة وتحديث مؤشر المساحة.");
             closeModal('add-modal');
             renderAdminProducts();
-            
-            // تصفير خانة الصورة للمعالجة القادمة
+            updateStorageInfo(); // تحديث البار فوراً بعد الإضافة
             imageInput.value = "";
         };
     };
@@ -176,16 +201,19 @@ function deleteProduct(id) {
         products = products.filter(p => p.id !== id);
         localStorage.setItem('products', JSON.stringify(products));
         renderAdminProducts();
+        updateStorageInfo(); // تحديث البار فوراً بعد الحذف
     }
 }
 
 function updateOrderBadge() {
     const badge = document.getElementById('order-badge');
-    if (orders.length > 0) {
-        badge.innerText = orders.length;
-        badge.style.display = 'inline-block';
-    } else {
-        badge.style.display = 'none';
+    if (badge) {
+        if (orders.length > 0) {
+            badge.innerText = orders.length;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
     }
 }
 
@@ -194,7 +222,8 @@ function checkNewOrders() {
         const latest = JSON.parse(localStorage.getItem('orders')) || [];
         if (latest.length > orders.length) {
             orders = latest;
-            document.getElementById('notif-sound').play();
+            const sound = document.getElementById('notif-sound');
+            if (sound) sound.play();
             updateOrderBadge();
         }
     }, 3000);
