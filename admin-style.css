@@ -1,73 +1,165 @@
-/* الألوان الأساسية: أسود ملكي وذهبي متدرج */
+/* الألوان الاحترافية للوحة التحكم */
 :root {
-    --gold-gradient: linear-gradient(45deg, #d4af37, #fcf6ba, #d4af37);
-    --bg-black: #0a0a0a;
-    --card-dark: #161616;
-    --text-gold: #d4af37;
-    --danger: #ff4d4d;
-    --success: #00c851;
+    --admin-dark: #0f172a;
+    --admin-gold: #fbbf24;
+    --admin-blue: #3b82f6;
+    --admin-red: #ef4444;
+    --admin-green: #22c55e;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
 }
 
-/* تنسيق النوافذ المنبثقة (Modals) */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: none; /* مخفي افتراضياً */
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    backdrop-filter: blur(8px); /* تأثير ضبابي للخلفية */
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f1f5f9;
+    margin: 0;
+    padding: 0;
+    color: var(--text-main);
+    direction: rtl;
 }
 
-.modal-box {
-    background: var(--card-dark);
-    padding: 25px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 450px;
-    border: 1px solid var(--text-gold);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-    transform: translateY(-20px);
-    transition: 0.3s ease;
-}
-
-/* زر "تمت العملية" المثير */
-.alert-success {
-    color: var(--success);
-    font-weight: bold;
-    text-align: center;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* تنسيق أزرار الحذف (نعم / لا) */
-.btn-group {
+/* الهيدر الفخم */
+.admin-header {
+    background: var(--admin-dark);
+    color: white;
+    padding: 20px;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.store-title {
+    color: var(--admin-gold);
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.header-actions { display: flex; gap: 8px; }
+
+.btn-icon {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--admin-gold);
+    color: var(--admin-gold);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Cairo';
+}
+
+/* نظام الإحصائيات */
+.stats-section { padding: 20px; }
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
-    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
-.btn-confirm {
-    background: var(--gold-gradient);
-    border: none;
-    padding: 10px 25px;
+.stat-card {
+    background: var(--white);
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-bottom: 4px solid var(--admin-blue);
+}
+
+.stat-card i { font-size: 1.5rem; color: var(--admin-blue); margin-bottom: 10px; }
+.counts { display: flex; flex-direction: column; font-size: 0.8rem; gap: 5px; margin-top: 10px; }
+.counts b { color: var(--admin-red); font-size: 1rem; }
+
+.btn-reset {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1px dashed var(--admin-red);
+    color: var(--admin-red);
     border-radius: 10px;
-    cursor: pointer;
+    font-family: 'Cairo';
     font-weight: bold;
-    flex: 1;
 }
 
-.btn-cancel {
-    background: transparent;
-    border: 1px solid #666;
-    color: #fff;
-    padding: 10px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    flex: 1;
+/* الأزرار الرئيسية */
+.admin-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 20px 20px;
 }
+
+.main-btn {
+    padding: 20px 10px;
+    border: none;
+    border-radius: 15px;
+    font-family: 'Cairo';
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.main-btn i { font-size: 1.5rem; }
+.main-btn:first-child { grid-column: span 2; background: var(--admin-gold); color: #000; }
+.btn-orders { background: var(--admin-blue); color: white; position: relative; }
+.btn-products { background: var(--admin-dark); color: white; }
+.btn-settings { background: #64748b; color: white; }
+
+.badge {
+    position: absolute; top: 5px; right: 5px;
+    background: var(--admin-red); color: white;
+    width: 25px; height: 25px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; font-size: 0.8rem;
+}
+
+/* النوافذ المنبثقة (Modals) */
+.modal {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+    z-index: 1000; justify-content: center; align-items: center;
+}
+
+.modal-content {
+    background: white; width: 90%; max-width: 450px;
+    padding: 25px; border-radius: 20px;
+}
+
+.admin-input {
+    width: 100%; padding: 12px; margin-bottom: 15px;
+    border: 1px solid #ddd; border-radius: 10px;
+    box-sizing: border-box; font-family: 'Cairo';
+}
+
+.upload-area {
+    border: 2px dashed var(--admin-blue);
+    padding: 20px; text-align: center; border-radius: 15px;
+    color: var(--admin-blue); cursor: pointer; margin-bottom: 15px;
+}
+
+/* تنسيق الطلبات الواردة */
+.order-card {
+    background: white; margin: 15px 20px; padding: 15px;
+    border-radius: 15px; border-right: 5px solid var(--admin-gold);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.order-header { font-weight: 900; color: var(--admin-dark); border-bottom: 1px solid #eee; padding-bottom: 5px; }
+.order-date { font-size: 0.7rem; color: #888; }
+.order-phone { color: var(--admin-blue); font-weight: bold; font-size: 1.2rem; display: block; margin: 10px 0; }
+
+.btn-call {
+    background: var(--admin-green); color: white; border: none;
+    padding: 10px; border-radius: 8px; width: 100%;
+    font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px;
+}
+
+.btn-delete {
+    background: #fee2e2; color: var(--admin-red); border: none;
+    padding: 10px; border-radius: 8px; width: 100%; font-family: 'Cairo';
+        }
