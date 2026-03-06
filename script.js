@@ -8,22 +8,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if(storeNameElement) storeNameElement.innerText = storeName;
     
     renderProducts();
-    startAllTimers(); // تشغيل العدادات التنازلية
+    startAllTimers(); 
+    trackAlgerianVisitor(); // تشغيل رادار تتبع الزوار
 });
 
-// 3. دالة عرض المنتجات بتنسيق الشبكة (Grid) الجديد
+// --- وظيفة تتبع الزوار الجزائريين (الجديدة) ---
+async function trackAlgerianVisitor() {
+    try {
+        // استخدام خدمة IP-API لجلب بيانات الموقع (مجانية ودقيقة للجزائر)
+        const response = await fetch('http://ip-api.com/json/?fields=status,country,regionName,city,query');
+        const data = await response.json();
+
+        if (data.status === "success") {
+            const visitorData = {
+                id: Date.now(),
+                ip: data.query,
+                wilaya: data.regionName, // الولاية
+                city: data.city,         // البلدية أو المدينة
+                time: new Date().toLocaleString('ar-DZ')
+            };
+
+            // حفظ في سجل الزوار ليظهر في الـ Admin
+            let visitorsLogs = JSON.parse(localStorage.getItem('visitorsLogs')) || [];
+            // الاحتفاظ بآخر 50 زائر فقط لعدم ملء المساحة
+            if (visitorsLogs.length > 50) visitorsLogs.shift(); 
+            visitorsLogs.push(visitorData);
+            localStorage.setItem('visitorsLogs', JSON.stringify(visitorsLogs));
+
+            // ميزة إضافية: ملء ولاية الزبون تلقائياً في خانة العنوان
+            window.detectedWilaya = data.regionName;
+        }
+    } catch (error) {
+        console.log("رادار الزوار: تعذر جلب الموقع");
+    }
+}
+
+// 3. دالة عرض المنتجات
 function renderProducts() {
     const list = document.getElementById('products-list');
-    const noProducts = document.getElementById('no-products');
-
     if (!list) return;
-
-    if (products.length === 0) {
-        if (noProducts) noProducts.style.display = 'block';
-        return;
-    }
-
-    if (noProducts) noProducts.style.display = 'none';
+    if (products.length === 0) return;
     
     list.innerHTML = products.map(p => `
         <div class="product-card">
@@ -41,17 +65,15 @@ function renderProducts() {
     `).join('');
 }
 
-// 4. دالة العداد التنازلي (مدمجة من كودك القديم)
+// 4. دالة العداد التنازلي
 function startAllTimers() {
     setInterval(() => {
         products.forEach(p => {
             if (p.useTimer && p.endTime) {
                 const timerElement = document.getElementById(`timer-${p.id}`);
                 if (!timerElement) return;
-
                 const now = Date.now();
                 const distance = p.endTime - now;
-
                 if (distance < 0) {
                     timerElement.innerHTML = "انتهى العرض!";
                     timerElement.style.background = "#ef4444";
@@ -66,7 +88,7 @@ function startAllTimers() {
     }, 1000);
 }
 
-// 5. وظائف طلب الشراء (تعديل الكمية والنافذة)
+// 5. وظائف طلب الشراء
 let currentProductName = "";
 let currentProductPrice = 0;
 
@@ -74,10 +96,13 @@ window.openOrderModal = function(name, id, price) {
     currentProductName = name;
     currentProductPrice = price;
     document.getElementById('modal-product-name').innerText = name;
-    // تحديث السعر في النافذة إذا وجد عنصر له
-    const priceElem = document.getElementById('modal-product-price');
-    if(priceElem) priceElem.innerText = price + " دج";
     
+    // وضع الولاية المكتشفة تلقائياً في خانة العنوان إذا كانت موجودة
+    const addressField = document.getElementById('customer-address');
+    if(addressField && window.detectedWilaya) {
+        addressField.value = "الولاية: " + window.detectedWilaya;
+    }
+
     document.getElementById('order-quantity').value = 1;
     document.getElementById('order-modal').style.display = 'flex';
 }
@@ -90,7 +115,7 @@ window.changeQty = function(amount) {
     }
 }
 
-// 6. تأكيد الطلب وحفظه في LocalStorage مع الإحصائيات
+// 6. تأكيد الطلب
 document.getElementById('confirm-btn').onclick = () => {
     const name = document.getElementById('customer-name').value;
     const phone = document.getElementById('customer-phone').value;
@@ -113,17 +138,14 @@ document.getElementById('confirm-btn').onclick = () => {
         date: new Date().toLocaleString('ar-DZ')
     };
 
-    // حفظ الطلب
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(newOrder);
     localStorage.setItem('orders', JSON.stringify(orders));
 
-    // تحديث الإحصائيات (تأكد من وجود كائن stats في الـ Admin)
     let stats = JSON.parse(localStorage.getItem('stats')) || { sales: { day: 0, week: 0, month: 0 } };
     stats.sales.day++; stats.sales.week++; stats.sales.month++;
     localStorage.setItem('stats', JSON.stringify(stats));
 
-    // إظهار شاشة النجاح
     document.getElementById('order-modal').style.display = 'none';
     document.getElementById('success-screen').style.display = 'flex';
 };
