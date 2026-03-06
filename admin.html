@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم حسام DZ | الإدارة الاحترافية</title>
+    <title>لوحة تحكم Stour00 | الإدارة الاحترافية</title>
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -16,131 +16,62 @@
             --success-green: #10b981;
         }
 
+        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: 50px; }
+
         .cloud-title {
             background: var(--cloud-white);
-            border-radius: 50px;
+            border-radius: 25px;
             padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             margin: 20px auto;
-            width: 85%;
-            border: 2px solid var(--primary-gold);
+            width: 90%;
+            border-bottom: 4px solid var(--primary-gold);
+            text-align: center;
         }
 
-        .rounded-copy-btn {
-            background: var(--deep-blue);
-            color: white;
-            border-radius: 30px;
-            padding: 12px 30px;
-            margin: 10px auto;
-            display: block;
-            width: fit-content;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .cloud-download-btn {
-            background: var(--sexy-gradient);
-            color: var(--deep-blue);
-            border-radius: 15px;
-            padding: 15px;
-            width: 80%;
-            margin: 15px auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 900;
-            border: none;
-            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3);
-        }
-
-        /* تنسيق مؤشر مساحة التخزين */
         .storage-container {
-            width: 85%;
+            width: 90%;
             margin: 15px auto 20px;
-            background: #f1f5f9;
+            background: #fff;
             border-radius: 15px;
             padding: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .storage-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--deep-blue);
-        }
-        .storage-bar-bg {
-            width: 100%;
-            background: #cbd5e1;
-            height: 12px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #storage-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #fbbf24);
-            transition: width 0.8s ease-in-out;
-        }
+        .storage-bar-bg { width: 100%; background: #e2e8f0; height: 10px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        #storage-bar { width: 0%; height: 100%; background: var(--success-green); transition: 0.5s; }
 
         .admin-table {
-            width: 95%;
-            margin: 20px auto;
-            border-collapse: collapse;
+            width: 90%;
+            margin: 15px auto;
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-collapse: collapse;
         }
-
-        .admin-table th { background: var(--deep-blue); color: white; padding: 12px; }
-        .admin-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-weight: bold; }
-
-        .btn-table-reset {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
+        .admin-table th { background: var(--deep-blue); color: white; padding: 12px; font-size: 0.9rem; }
+        .admin-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-weight: bold; }
 
         .sexy-add-btn {
             background: var(--sexy-gradient);
             color: var(--deep-blue);
-            padding: 18px;
-            font-size: 1.2rem;
+            padding: 15px;
+            font-size: 1.1rem;
             font-weight: 900;
-            border-radius: 20px;
+            border-radius: 15px;
             width: 90%;
             margin: 20px auto;
             display: block;
             border: none;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .vertical-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 90%;
-            margin: 0 auto;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
         }
 
         .nav-item {
+            width: 90%;
+            margin: 10px auto;
             padding: 15px;
-            border-radius: 15px;
+            border-radius: 12px;
             border: none;
             font-weight: bold;
             display: flex;
@@ -148,169 +79,127 @@
             justify-content: center;
             gap: 10px;
             color: white;
+            cursor: pointer;
         }
-
-        .btn-orders-new { background: #3b82f6; }
+        .btn-orders-new { background: #3b82f6; position: relative; }
         .btn-products-new { background: #10b981; }
-        .btn-settings-new { background: #64748b; margin-top: 10px; opacity: 0.9; }
+        .btn-settings-new { background: #64748b; }
 
+        /* Modal Styles */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; }
+        .admin-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; }
+        .upload-area { border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; color: #64748b; }
     </style>
 </head>
 <body>
 
-    <div style="text-align: center;">
-        <div class="cloud-title">
-            <h1 id="display-store-name" style="margin:0; color: #1e293b; font-weight: 900;">متجر حسام DZ</h1>
-        </div>
-
-        <button class="rounded-copy-btn" onclick="copyStoreLink()">
+    <div class="cloud-title">
+        <h1 id="display-store-name" style="margin:0; font-size: 1.5rem;">متجر حسام DZ</h1>
+        <button onclick="copyStoreLink()" style="background:none; border:1px solid #ddd; padding:5px 15px; border-radius:20px; margin-top:10px; cursor:pointer; font-family:'Cairo';">
             <i class="fas fa-link"></i> نسخ رابط المتجر
         </button>
+    </div>
 
-        <button class="cloud-download-btn" onclick="showInstallPrompt()">
-            <i class="fas fa-cloud-download-alt"></i> تنزيل التطبيق على الهاتف
-        </button>
-
-        <div class="storage-container">
-            <div class="storage-header">
-                <span><i class="fas fa-hdd"></i> مساحة تخزين المنتجات</span>
-                <span id="storage-percent">0%</span>
-            </div>
-            <div class="storage-bar-bg">
-                <div id="storage-bar"></div>
-            </div>
+    <div class="storage-container">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+            <span><i class="fas fa-hdd"></i> مساحة التخزين المتاحة</span>
+            <span id="storage-percent">0%</span>
+        </div>
+        <div class="storage-bar-bg">
+            <div id="storage-bar"></div>
         </div>
     </div>
 
-    <h2 style="padding-right: 20px; font-size: 1.1rem; color: #475569;"><i class="fas fa-eye"></i> إحصائيات الزوار</h2>
     <table class="admin-table">
-        <thead>
-            <tr>
-                <th>اليوم</th>
-                <th>الأسبوع</th>
-                <th>الشهر</th>
-                <th>إجراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id="v-day">0</td>
-                <td id="v-week">0</td>
-                <td id="v-month">0</td>
-                <td><button class="btn-table-reset" onclick="resetVisitors()">تصفير</button></td>
-            </tr>
-        </tbody>
+        <tr><th colspan="4">زوار المتجر</th></tr>
+        <tr><td>اليوم</td><td>الأسبوع</td><td>الشهر</td><td>إجراء</td></tr>
+        <tr>
+            <td id="v-day">0</td><td id="v-week">0</td><td id="v-month">0</td>
+            <td><button onclick="resetVisitors()" style="background:#fee2e2; color:#ef4444; border:none; border-radius:10px; padding:4px 8px;">تصفير</button></td>
+        </tr>
     </table>
 
-    <h2 style="padding-right: 20px; font-size: 1.1rem; color: #475569;"><i class="fas fa-shopping-cart"></i> تقرير المبيعات</h2>
     <table class="admin-table">
-        <thead>
-            <tr>
-                <th>اليوم</th>
-                <th>الأسبوع</th>
-                <th>الشهر</th>
-                <th>إجراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id="s-day">0</td>
-                <td id="s-week">0</td>
-                <td id="s-month">0</td>
-                <td><button class="btn-table-reset" onclick="resetSales()">تصفير</button></td>
-            </tr>
-        </tbody>
+        <tr><th colspan="4">تقرير المبيعات</th></tr>
+        <tr><td>اليوم</td><td>الأسبوع</td><td>الشهر</td><td>إجراء</td></tr>
+        <tr>
+            <td id="s-day">0</td><td id="s-week">0</td><td id="s-month">0</td>
+            <td><button onclick="resetSales()" style="background:#fee2e2; color:#ef4444; border:none; border-radius:10px; padding:4px 8px;">تصفير</button></td>
+        </tr>
     </table>
 
     <button class="sexy-add-btn" onclick="openAddModal()">
-        <i class="fas fa-plus-circle"></i> إضافة منتج جديد الآن
+        <i class="fas fa-plus-circle"></i> إضافة منتج جديد
     </button>
 
     <div class="vertical-nav">
         <button class="nav-item btn-orders-new" onclick="toggleOrders()">
             <i class="fas fa-truck"></i> الطلبيات الواردة 
-            <span id="order-badge" class="badge" style="background:red; padding:2px 8px; border-radius:10px; display:none;">0</span>
+            <span id="order-badge" style="background:white; color:#3b82f6; padding:2px 8px; border-radius:10px; font-size:12px; display:none;">0</span>
         </button>
-        
         <button class="nav-item btn-products-new" onclick="toggleProductsList()">
-            <i class="fas fa-boxes"></i> المنتجات الحالية في المتجر
+            <i class="fas fa-boxes"></i> إدارة المنتجات
         </button>
-
         <button class="nav-item btn-settings-new" onclick="openSettings()">
-            <i class="fas fa-cog"></i> إعدادات المتجر العامة
+            <i class="fas fa-cog"></i> الإعدادات العامة
         </button>
     </div>
 
-    <div id="orders-container" class="data-section" style="display:none; padding: 20px;">
-        <h2 class="section-title">قائمة الطلبات</h2>
+    <div id="orders-container" style="display:none; padding: 15px;">
+        <h2 style="text-align:center; font-size:1.1rem;">📦 الطلبات الجديدة</h2>
         <div id="orders-list"></div>
     </div>
 
-    <div id="admin-products-container" class="data-section" style="display:none; padding: 20px;">
-        <h2 class="section-title">إدارة المنتجات</h2>
+    <div id="admin-products-container" style="display:none; padding: 15px;">
+        <h2 style="text-align:center; font-size:1.1rem;">🛠️ تعديل المنتجات</h2>
         <div id="admin-products-list"></div>
     </div>
 
     <div id="add-modal" class="modal">
         <div class="modal-content">
-            <h3>إضافة منتج جديد</h3>
-            <input type="text" id="p-name" placeholder="اسم المنتج" class="admin-input">
-            <textarea id="p-desc" placeholder="مواصفات المنتج" class="admin-input"></textarea>
-            <input type="number" id="p-price" placeholder="سعر المنتج (دج)" class="admin-input">
-            <input type="number" id="p-old-price" placeholder="السعر قبل التخفيض (اختياري)" class="admin-input">
+            <h3 style="margin-top:0;">إضافة منتج جديد</h3>
+            <input type="text" id="p-name" placeholder="اسم المنتج (مثال: حذاء نايك)" class="admin-input">
+            <textarea id="p-desc" placeholder="وصف المنتج ومميزاته" class="admin-input" rows="3"></textarea>
             
-            <div class="option-row">
-                <label>تفعيل عداد تشويق؟</label>
-                <input type="checkbox" id="p-timer" onchange="toggleTimerInputs()">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="p-price" placeholder="السعر الحالي (دج)" class="admin-input">
+                <input type="number" id="p-old-price" placeholder="السعر القديم (شطب)" class="admin-input">
             </div>
 
-            <div id="timer-inputs-container" style="display:none; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px;">
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="p-hours" class="admin-input" placeholder="ساعات" value="0">
-                    <input type="number" id="p-minutes" class="admin-input" placeholder="دقائق" value="30">
+            <div style="background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <label style="font-size:0.9rem; font-weight:bold;">تفعيل عداد العرض؟</label>
+                <input type="checkbox" id="p-timer" onchange="document.getElementById('t-inputs').style.display = this.checked ? 'flex' : 'none'">
+                <div id="t-inputs" style="display:none; gap:10px; margin-top:10px;">
+                    <input type="number" id="p-hours" placeholder="ساعة" class="admin-input" style="margin:0;">
+                    <input type="number" id="p-minutes" placeholder="دقيقة" class="admin-input" style="margin:0;">
                 </div>
             </div>
 
             <div class="upload-area" onclick="document.getElementById('p-image').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
+                <i class="fas fa-image" style="font-size:2rem;"></i>
                 <p>اضغط لرفع صورة المنتج</p>
                 <input type="file" id="p-image" hidden accept="image/*">
             </div>
 
-            <div class="modal-actions">
-                <button onclick="saveProduct()" class="btn-save">تأكيد الرفع</button>
-                <button onclick="closeModal('add-modal')" class="btn-cancel">إلغاء</button>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="saveProduct()" style="flex:2; background:var(--success-green); color:white; border:none; padding:12px; border-radius:10px; font-weight:bold;">حفظ المنتج</button>
+                <button onclick="closeModal('add-modal')" style="flex:1; background:#94a3b8; color:white; border:none; padding:12px; border-radius:10px;">إلغاء</button>
             </div>
-        </div>
-    </div>
-
-    <div id="custom-alert-modal" class="modal" style="display:none; z-index: 10000; background: rgba(0,0,0,0.8);">
-        <div class="modal-content" style="border-top: 6px solid #fbbf24; text-align: center; max-width: 320px;">
-            <i class="fas fa-mobile-screen-button" style="font-size: 2.5rem; color: #fbbf24; margin-bottom: 15px;"></i>
-            <h3>تثبيت التطبيق</h3>
-            <p>هل ترغب في إضافة المتجر كاختصار على هاتفك؟</p>
-            <button id="alert-yes" class="btn-save" style="width:100%; background:#fbbf24; color:black;">نعم، تثبيت</button>
-            <button id="alert-no" class="btn-cancel" style="width:100%; border:none;">ليس الآن</button>
         </div>
     </div>
 
     <div id="settings-modal" class="modal">
         <div class="modal-content">
-            <h3>إعدادات المتجر</h3>
-            <input type="text" id="new-store-name" class="admin-input" placeholder="اسم المتجر الجديد">
-            <button onclick="updateStoreName()" class="btn-save">حفظ</button>
-            <button onclick="closeModal('settings-modal')" class="btn-cancel">إلغاء</button>
+            <h3>تغيير اسم المتجر</h3>
+            <input type="text" id="new-store-name" class="admin-input" placeholder="اكتب اسم المتجر الجديد">
+            <button onclick="updateStoreName()" style="width:100%; background:var(--deep-blue); color:white; border:none; padding:12px; border-radius:10px;">حفظ التغييرات</button>
+            <button onclick="closeModal('settings-modal')" style="width:100%; background:none; color:#64748b; border:none; margin-top:10px;">رجوع</button>
         </div>
     </div>
 
     <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <script>
-        function toggleTimerInputs() {
-            const container = document.getElementById('timer-inputs-container');
-            container.style.display = document.getElementById('p-timer').checked ? 'block' : 'none';
-        }
-    </script>
     <script src="admin-logic.js"></script>
 </body>
-                </html>
+</html>
