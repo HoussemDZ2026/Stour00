@@ -3,66 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجرنا الاحترافي</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Stour00 | متجر حسام DZ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1 id="store-name" class="animated-title">متجر حسام DZ</h1>
-        <div class="welcome-msg-container">
-            <p id="welcome-message" class="moving-text">أهلاً بكم في متجرنا.. جودة عالمية وأسعار تنافسية!</p>
+    <div class="announcement-bar">
+        <p>🚚 التوصيل متوفر لـ 58 ولاية - الدفع عند الاستلام</p>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <h1 id="store-name">Stour<span>00</span></h1>
+            </div>
+            <div class="header-icons">
+                <i class="fas fa-search search-trigger"></i>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span id="cart-count">0</span>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main id="products-container">
+    <section class="search-section">
+        <div class="container">
+            <div class="search-wrapper">
+                <input type="text" id="search-input" placeholder="ابحث عن منتجك المفضل...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <nav class="categories-nav">
+        <div class="container">
+            <div class="category-item active">الكل</div>
+            <div class="category-item">أحذية</div>
+            <div class="category-item">ملابس</div>
+            <div class="category-item">إكسسوارات</div>
+        </div>
+    </nav>
+
+    <main class="container">
         <div id="no-products" class="no-products-msg" style="display: none;">
             <i class="fas fa-box-open"></i>
-            <p>الوقت الحالي لا يوجد منتجات للبيع</p>
+            <p>حالياً لا توجد منتجات متوفرة</p>
         </div>
         
-        <div id="products-list"></div>
+        <div id="products-list" class="products-grid"></div>
     </main>
 
     <div id="order-modal" class="modal">
         <div class="modal-content">
-            <h2 id="modal-product-name" class="modal-title">اسم المنتج</h2>
-            <hr>
-            <div class="form-group">
-                <label>الاسم واللقب:</label>
-                <input type="text" id="customer-name" placeholder="أدخل اسمك الكامل">
+            <div class="modal-header">
+                <h3>تأكيد الطلب</h3>
+                <span id="cancel-btn">&times;</span>
             </div>
-            <div class="form-group">
-                <label>رقم الهاتف:</label>
-                <input type="tel" id="customer-phone" placeholder="أدخل رقم هاتفك">
+            <div class="product-summary-mini">
+                <p id="modal-product-name">اسم المنتج</p>
+                <p id="modal-product-price" class="price-tag"></p>
             </div>
-            <div class="form-group">
-                <label>الولاية والبلدية:</label>
-                <input type="text" id="customer-address" placeholder="مثال: الجزائر - الدار البيضاء">
-            </div>
-            <div class="form-group">
-                <label>الكمية المطلوبة:</label>
-                <input type="number" id="order-quantity" value="1" min="1">
-            </div>
-            
-            <div class="modal-buttons">
-                <button id="confirm-btn" class="btn-confirm">تأكيد الطلب</button>
-                <button id="cancel-btn" class="btn-cancel">إلغاء</button>
-            </div>
+            <form id="purchase-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> الاسم الكامل:</label>
+                    <input type="text" id="customer-name" placeholder="الاسم واللقب" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> رقم الهاتف:</label>
+                    <input type="tel" id="customer-phone" placeholder="05 / 06 / 07 ..." required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> الولاية والبلدية:</label>
+                    <input type="text" id="customer-address" placeholder="مثال: وهران - سيدي الشحمي" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sort-amount-up"></i> الكمية:</label>
+                    <div class="quantity-control">
+                        <button type="button" onclick="changeQty(-1)">-</button>
+                        <input type="number" id="order-quantity" value="1" min="1" readonly>
+                        <button type="button" onclick="changeQty(1)">+</button>
+                    </div>
+                </div>
+                
+                <button type="button" id="confirm-btn" class="btn-order-final">
+                    إتمام الطلب الآن <i class="fas fa-check-circle"></i>
+                </button>
+            </form>
         </div>
     </div>
 
     <div id="success-screen" class="success-overlay" style="display: none;">
         <div class="success-card">
-            <div class="check-icon">✓</div>
-            <h2>تم استلام طلبك بنجاح!</h2>
-            <p>سوف نتواصل معك في الهاتف عن قريب</p>
-            <button onclick="location.reload()" class="btn-back">العودة إلى المتجر</button>
+            <div class="check-animation">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>تم تسجيل طلبك!</h2>
+            <p>سيتم الاتصال بك خلال 24 ساعة لتأكيد التوصيل.</p>
+            <button onclick="location.reload()" class="btn-back">مواصلة التسوق</button>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
