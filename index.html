@@ -39,18 +39,18 @@
     </section>
 
     <nav class="categories-nav">
-        <div class="container">
-            <div class="category-item active">الكل</div>
-            <div class="category-item">أحذية</div>
-            <div class="category-item">ملابس</div>
-            <div class="category-item">إكسسوارات</div>
+        <div class="container" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <button class="category-item active" onclick="filterByCategory('الكل')">الكل</button>
+            <button class="category-item" id="btn-shoes" onclick="filterByCategory('أحذية')">أحذية</button>
+            <button class="category-item" id="btn-clothes" onclick="filterByCategory('ملابس')">ملابس</button>
+            <button class="category-item" id="btn-acc" onclick="filterByCategory('إكسسوارات')">إكسسوارات</button>
         </div>
     </nav>
 
     <main class="container">
         <div id="no-products" class="no-products-msg" style="display: none;">
             <i class="fas fa-box-open"></i>
-            <p>حالياً لا توجد منتجات متوفرة</p>
+            <p>حالياً لا توجد منتجات متوفرة في هذا القسم</p>
         </div>
         
         <div id="products-list" class="products-grid"></div>
@@ -60,7 +60,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>تأكيد الطلب</h3>
-                <span id="cancel-btn">&times;</span>
+                <span id="cancel-btn-top" onclick="document.getElementById('order-modal').style.display='none'" style="cursor:pointer; font-size:24px;">&times;</span>
             </div>
             <div class="product-summary-mini">
                 <p id="modal-product-name">اسم المنتج</p>
@@ -91,6 +91,7 @@
                 <button type="button" id="confirm-btn" class="btn-order-final">
                     إتمام الطلب الآن <i class="fas fa-check-circle"></i>
                 </button>
+                <button type="button" id="cancel-btn" class="btn-cancel" style="width: 100%; margin-top: 10px; background: #eee; border: none; padding: 10px; border-radius: 8px;">إلغاء</button>
             </form>
         </div>
     </div>
@@ -108,4 +109,4 @@
 
     <script src="script.js"></script>
 </body>
-    </html>
+</html>
