@@ -1,13 +1,15 @@
 // 1. جلب البيانات من التخزين المحلي (LocalStorage)
 let products = JSON.parse(localStorage.getItem('products')) || [];
 const storeName = localStorage.getItem('storeName') || "متجر حسام DZ";
+// جلب أسماء الأقسام المخصصة أو استخدام الافتراضية
+const customCatNames = JSON.parse(localStorage.getItem('categoryNames')) || ['أحذية', 'ملابس', 'إكسسوارات'];
 
 // 2. عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
     const storeNameElement = document.getElementById('store-name');
     if(storeNameElement) storeNameElement.innerText = storeName;
     
-    // تحديث الأزرار (إخفاء الفارغ) عند التحميل
+    // تحديث الأزرار (النصوص + الإخفاء) عند التحميل
     updateCategoryButtons();
     
     renderProducts('الكل'); 
@@ -15,20 +17,28 @@ document.addEventListener('DOMContentLoaded', () => {
     trackAlgerianVisitor(); 
 });
 
-// --- الوظيفة المحدثة: إخفاء الأقسام الفارغة باستخدام الـ ID ---
+// --- الوظيفة المطورة: تحديث أسماء الأقسام وإخفاء الفارغ ---
 function updateCategoryButtons() {
+    // ماب يربط الاسم الجديد بالـ ID الموجود في HTML
     const categoryMap = {
-        'أحذية': 'btn-shoes',
-        'ملابس': 'btn-clothes',
-        'إكسسوارات': 'btn-acc'
+        [customCatNames[0]]: 'btn-shoes',
+        [customCatNames[1]]: 'btn-clothes',
+        [customCatNames[2]]: 'btn-acc'
     };
 
     for (const [catName, btnId] of Object.entries(categoryMap)) {
         const btn = document.getElementById(btnId);
         if (btn) {
-            // فحص إذا كان هناك منتج ينتمي لهذا القسم
+            // 1. تحديث نص الزر ليطابق الاسم الجديد من لوحة التحكم
+            btn.innerText = catName;
+            
+            // 2. تحديث وظيفة الضغط لتبحث عن الاسم الجديد
+            btn.onclick = () => filterByCategory(catName);
+
+            // 3. فحص إذا كان هناك منتج ينتمي لهذا القسم
             const hasProducts = products.some(p => p.category === catName);
-            // إخفاء الزر تماماً إذا لم تكن هناك منتجات
+            
+            // 4. إخفاء الزر تماماً إذا لم تكن هناك منتجات
             btn.style.display = hasProducts ? 'inline-block' : 'none';
         }
     }
@@ -47,7 +57,10 @@ function renderProducts(filter = 'الكل') {
 
     if (filteredProducts.length === 0) {
         list.innerHTML = '';
-        if(noProductsMsg) noProductsMsg.style.display = 'block';
+        if(noProductsMsg) {
+            noProductsMsg.style.display = 'block';
+            noProductsMsg.querySelector('p').innerText = `حالياً لا توجد منتجات في قسم ${filter}`;
+        }
         return;
     }
     
@@ -69,11 +82,10 @@ function renderProducts(filter = 'الكل') {
     `).join('');
 }
 
-// دالة التبديل بين الأقسام
+// دالة التبديل بين الأقسام (لتمييز الزر النشط)
 window.filterByCategory = function(category) {
     renderProducts(category);
     
-    // تحديث شكل الزر النشط (Active)
     const buttons = document.querySelectorAll('.category-item');
     buttons.forEach(btn => {
         btn.classList.remove('active');
@@ -81,7 +93,7 @@ window.filterByCategory = function(category) {
     });
 }
 
-// --- وظيفة تتبع الزوار الجزائريين ---
+// --- بقية الدوال (التتبع، العداد، الطلب) تبقى كما هي دون تغيير ---
 async function trackAlgerianVisitor() {
     try {
         const response = await fetch('https://ipapi.co/json/'); 
@@ -103,7 +115,6 @@ async function trackAlgerianVisitor() {
     } catch (error) { console.log("رادار الزوار متوقف"); }
 }
 
-// 4. العداد التنازلي
 function startAllTimers() {
     setInterval(() => {
         products.forEach(p => {
@@ -126,7 +137,6 @@ function startAllTimers() {
     }, 1000);
 }
 
-// 5. وظائف طلب الشراء
 let currentProductName = "";
 let currentProductPrice = 0;
 
