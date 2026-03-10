@@ -7,49 +7,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const storeNameElement = document.getElementById('store-name');
     if(storeNameElement) storeNameElement.innerText = storeName;
     
-    renderProducts();
+    // التعديل الجديد: تحديث ظهور أزرار التصنيفات بناءً على توفر المنتجات
+    updateCategoryButtons();
+    
+    renderProducts('الكل'); // العرض الافتراضي لكل المنتجات المتاحة
     startAllTimers(); 
-    trackAlgerianVisitor(); // تشغيل رادار تتبع الزوار
+    trackAlgerianVisitor(); 
 });
 
-// --- وظيفة تتبع الزوار الجزائريين (الجديدة) ---
-async function trackAlgerianVisitor() {
-    try {
-        // استخدام خدمة IP-API لجلب بيانات الموقع (مجانية ودقيقة للجزائر)
-        const response = await fetch('http://ip-api.com/json/?fields=status,country,regionName,city,query');
-        const data = await response.json();
-
-        if (data.status === "success") {
-            const visitorData = {
-                id: Date.now(),
-                ip: data.query,
-                wilaya: data.regionName, // الولاية
-                city: data.city,         // البلدية أو المدينة
-                time: new Date().toLocaleString('ar-DZ')
-            };
-
-            // حفظ في سجل الزوار ليظهر في الـ Admin
-            let visitorsLogs = JSON.parse(localStorage.getItem('visitorsLogs')) || [];
-            // الاحتفاظ بآخر 50 زائر فقط لعدم ملء المساحة
-            if (visitorsLogs.length > 50) visitorsLogs.shift(); 
-            visitorsLogs.push(visitorData);
-            localStorage.setItem('visitorsLogs', JSON.stringify(visitorsLogs));
-
-            // ميزة إضافية: ملء ولاية الزبون تلقائياً في خانة العنوان
-            window.detectedWilaya = data.regionName;
+// --- وظيفة ذكية لإخفاء الأقسام الفارغة من واجهة الزبون ---
+function updateCategoryButtons() {
+    const categories = ['أحذية', 'ملابس', 'إكسسوارات'];
+    categories.forEach(cat => {
+        // نبحث عن الزر الذي يحتوي على نص التصنيف (أو يمكنك استخدام id إذا أضفته للزر)
+        const buttons = Array.from(document.querySelectorAll('.filter-btn')); // افترضنا أن كلاس الأزرار هو filter-btn
+        const btn = buttons.find(b => b.innerText.includes(cat));
+        
+        // التحقق إذا كان هناك منتج واحد على الأقل ينتمي لهذا القسم
+        const hasProducts = products.some(p => p.category === cat);
+        
+        if (btn) {
+            if (hasProducts) {
+                btn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'none'; // إخفاء القسم إذا كان فارغاً
+            }
         }
-    } catch (error) {
-        console.log("رادار الزوار: تعذر جلب الموقع");
-    }
+    });
 }
 
-// 3. دالة عرض المنتجات
-function renderProducts() {
+// 3. دالة عرض المنتجات (محدثة لتدعم الفلترة حسب القسم)
+function renderProducts(filter = 'الكل') {
     const list = document.getElementById('products-list');
     if (!list) return;
-    if (products.length === 0) return;
     
-    list.innerHTML = products.map(p => `
+    // تصفية المنتجات بناءً على القسم المختار
+    let filteredProducts = products;
+    if (filter !== 'الكل') {
+        filteredProducts = products.filter(p => p.category === filter);
+    }
+
+    if (filteredProducts.length === 0) {
+        list.innerHTML = `<p style="text-align:center; width:100%; padding:20px;">لا توجد منتجات متوفرة في قسم ${filter} حالياً.</p>`;
+        return;
+    }
+    
+    list.innerHTML = filteredProducts.map(p => `
         <div class="product-card">
             ${p.useTimer ? `<div class="timer-badge" id="timer-${p.id}" style="position:absolute; top:5px; right:5px; background:rgba(231, 76, 60, 0.9); color:white; padding:2px 8px; border-radius:4px; font-size:10px; z-index:10;">جاري الحساب...</div>` : ''}
             <img src="${p.image}" class="product-image" alt="${p.name}">
@@ -65,7 +68,46 @@ function renderProducts() {
     `).join('');
 }
 
-// 4. دالة العداد التنازلي
+// أضف هذه الدالة ليتم استدعاؤها عند الضغط على أزرار التصنيفات في HTML
+window.filterByCategory = function(category) {
+    renderProducts(category);
+    
+    // إضافة كلاس 'active' للزر المختار (اختياري لتحسين الشكل)
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.innerText.includes(category)) btn.classList.add('active');
+    });
+}
+
+// --- وظيفة تتبع الزوار الجزائريين ---
+async function trackAlgerianVisitor() {
+    try {
+        const response = await fetch('https://ipapi.co/json/'); // خدمة بديلة أكثر استقراراً مع HTTPS
+        const data = await response.json();
+
+        if (data.city) {
+            const visitorData = {
+                id: Date.now(),
+                ip: data.ip,
+                wilaya: data.region, 
+                city: data.city,
+                time: new Date().toLocaleString('ar-DZ')
+            };
+
+            let visitorsLogs = JSON.parse(localStorage.getItem('visitorsLogs')) || [];
+            if (visitorsLogs.length > 50) visitorsLogs.shift(); 
+            visitorsLogs.push(visitorData);
+            localStorage.setItem('visitorsLogs', JSON.stringify(visitorsLogs));
+
+            window.detectedWilaya = data.region;
+        }
+    } catch (error) {
+        console.log("رادار الزوار: تعذر جلب الموقع");
+    }
+}
+
+// 4. دالة العداد التنازلي (تعمل على المنتجات الظاهرة فقط)
 function startAllTimers() {
     setInterval(() => {
         products.forEach(p => {
@@ -88,7 +130,7 @@ function startAllTimers() {
     }, 1000);
 }
 
-// 5. وظائف طلب الشراء
+// 5. وظائف طلب الشراء (كما هي دون تغيير)
 let currentProductName = "";
 let currentProductPrice = 0;
 
@@ -97,7 +139,6 @@ window.openOrderModal = function(name, id, price) {
     currentProductPrice = price;
     document.getElementById('modal-product-name').innerText = name;
     
-    // وضع الولاية المكتشفة تلقائياً في خانة العنوان إذا كانت موجودة
     const addressField = document.getElementById('customer-address');
     if(addressField && window.detectedWilaya) {
         addressField.value = "الولاية: " + window.detectedWilaya;
@@ -143,6 +184,7 @@ document.getElementById('confirm-btn').onclick = () => {
     localStorage.setItem('orders', JSON.stringify(orders));
 
     let stats = JSON.parse(localStorage.getItem('stats')) || { sales: { day: 0, week: 0, month: 0 } };
+    if(!stats.sales) stats.sales = { day: 0, week: 0, month: 0 };
     stats.sales.day++; stats.sales.week++; stats.sales.month++;
     localStorage.setItem('stats', JSON.stringify(stats));
 
