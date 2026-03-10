@@ -85,27 +85,20 @@
         }
         .btn-orders-new { background: #3b82f6; position: relative; }
         .btn-products-new { background: #10b981; }
-        .btn-radar-new { background: var(--algeria-green); } /* زر الرادار الجديد */
+        .btn-radar-new { background: var(--algeria-green); }
         .btn-settings-new { background: #64748b; }
 
-        /* تنسيق كروت الزوار في الرادار */
-        .visitor-card {
-            background: white;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-right: 5px solid var(--algeria-green);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Modal Styles */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: white; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; }
-        .admin-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; }
+        .admin-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; background-color: #fff;}
         .upload-area { border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; color: #64748b; }
+        
+        /* تنسيق القائمة المنسدلة للقسم */
+        select.admin-input {
+            cursor: pointer;
+            border-right: 5px solid var(--primary-gold);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -169,8 +162,7 @@
 
     <div id="radar-container" style="display:none; padding: 15px;">
         <h2 style="text-align:center; font-size:1.1rem; color: var(--algeria-green);">📡 نشاط الزوار حالياً</h2>
-        <div id="visitors-list">
-            </div>
+        <div id="visitors-list"></div>
     </div>
 
     <div id="orders-container" style="display:none; padding: 15px;">
@@ -187,6 +179,14 @@
         <div class="modal-content">
             <h3 style="margin-top:0;">إضافة منتج جديد</h3>
             <input type="text" id="p-name" placeholder="اسم المنتج" class="admin-input">
+            
+            <label style="display:block; margin-bottom:5px; font-size:0.9rem; font-weight:bold;">اختر قسم المنتج:</label>
+            <select id="p-category" class="admin-input">
+                <option value="أحذية">أحذية 👟</option>
+                <option value="ملابس">ملابس 👕</option>
+                <option value="إكسسوارات">إكسسوارات ⌚</option>
+            </select>
+
             <textarea id="p-desc" placeholder="وصف المنتج" class="admin-input" rows="3"></textarea>
             
             <div style="display:flex; gap:10px;">
@@ -210,7 +210,7 @@
             </div>
 
             <div style="display:flex; gap:10px; margin-top:20px;">
-                <button onclick="saveProduct()" style="flex:2; background:var(--success-green); color:white; border:none; padding:12px; border-radius:10px; font-weight:bold;">حفظ</button>
+                <button onclick="saveProduct()" style="flex:2; background:var(--success-green); color:white; border:none; padding:12px; border-radius:10px; font-weight:bold;">حفظ المنتج</button>
                 <button onclick="closeModal('add-modal')" style="flex:1; background:#94a3b8; color:white; border:none; padding:12px; border-radius:10px;">إلغاء</button>
             </div>
         </div>
@@ -229,4 +229,4 @@
 
     <script src="admin-logic.js"></script>
 </body>
-            </html>
+    </html>
