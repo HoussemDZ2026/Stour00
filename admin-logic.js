@@ -55,13 +55,16 @@ function toggleRadar() {
     if(isHidden) renderVisitors();
 }
 
-// --- إضافة منتج جديد (مع الضغط) ---
+// --- إضافة منتج جديد (محدث لدعم الأقسام مع الحفاظ على ضغط الصور) ---
 function saveProduct() {
     const name = document.getElementById('p-name').value;
     const desc = document.getElementById('p-desc').value;
     const price = document.getElementById('p-price').value;
     const oldPrice = document.getElementById('p-old-price').value;
     const useTimer = document.getElementById('p-timer').checked;
+    
+    // سحب القسم المختار من القائمة المنسدلة الجديدة
+    const category = document.getElementById('p-category').value;
     
     const hours = parseInt(document.getElementById('p-hours').value) || 0;
     const minutes = parseInt(document.getElementById('p-minutes').value) || 0;
@@ -92,7 +95,9 @@ function saveProduct() {
 
             const newProduct = {
                 id: Date.now(),
-                name, description: desc, 
+                name: name,
+                category: category, // تخزين القسم المختار
+                description: desc, 
                 price: parseFloat(price), 
                 oldPrice: oldPrice ? parseFloat(oldPrice) : null,
                 useTimer, timerHours: hours, timerMinutes: minutes,
@@ -103,16 +108,21 @@ function saveProduct() {
             products.push(newProduct);
             localStorage.setItem('products', JSON.stringify(products));
             
-            alert("تم إضافة المنتج!");
+            alert(`تم إضافة المنتج في قسم ${category}!`);
             closeModal('add-modal');
             renderAdminProducts();
             updateStorageInfo();
+
+            // تصغير النموذج
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-desc').value = '';
+            document.getElementById('p-price').value = '';
         };
     };
     reader.readAsDataURL(file);
 }
 
-// --- عرض المنتجات ---
+// --- عرض المنتجات (محدث لإظهار القسم في الإدارة) ---
 function renderAdminProducts() {
     const list = document.getElementById('admin-products-list');
     if(!list) return;
@@ -120,10 +130,12 @@ function renderAdminProducts() {
         <div class="order-card" style="border-right: 5px solid #fbbf24; background: #fdfdfd; padding:10px; margin-bottom:10px; border-radius:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
-                    <b>${p.name}</b> <br>
+                    <b>${p.name}</b> 
+                    <span style="font-size:0.7rem; background:#e2e8f0; padding:2px 6px; border-radius:10px; margin-right:5px;">${p.category || 'بدون قسم'}</span>
+                    <br>
                     <span style="color:#e74c3c; font-weight:bold;">${p.price} دج</span>
                 </div>
-                <button onclick="deleteProduct(${p.id})" style="background:#ffeded; color:#e74c3c; border:none; padding:5px; border-radius:5px;">حذف</button>
+                <button onclick="deleteProduct(${p.id})" style="background:#ffeded; color:#e74c3c; border:none; padding:5px; border-radius:5px; cursor:pointer;">حذف</button>
             </div>
         </div>
     `).join('');
@@ -152,7 +164,6 @@ function renderOrders() {
 // --- وظائف التحديث المستمر ---
 function checkNewData() {
     setInterval(() => {
-        // فحص الطلبات
         const latestOrders = JSON.parse(localStorage.getItem('orders')) || [];
         if (latestOrders.length > orders.length) {
             orders = latestOrders;
@@ -161,7 +172,6 @@ function checkNewData() {
             if(document.getElementById('orders-container').style.display === 'block') renderOrders();
         }
         
-        // تحديث الرادار تلقائياً إذا كان مفتوحاً
         if(document.getElementById('radar-container').style.display === 'block') {
             renderVisitors();
         }
